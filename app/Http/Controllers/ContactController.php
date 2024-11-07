@@ -25,7 +25,7 @@ class ContactController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => 'Contacts retrieved successfully',
+            'message' => 'Contacts retrieved successfully test en dev',
             'data' => $contacts,
         ], 200);
     }
