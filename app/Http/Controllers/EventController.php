@@ -338,4 +338,48 @@ class EventController extends Controller
             'message' => 'Event deleted successfully.',
         ], 200);
     }
+
+    /**
+     * Delete the specified event's image.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteImage($id)
+    {
+        // Encontrar el miembro de la cámara por ID.
+        $event = Event::find($id);
+
+        // Si el miembro no existe, retornar una respuesta 404.
+        if (!$event) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No se encontró el evento con el ID proporcionado.'
+            ], 404);
+        }
+
+        // Verificar si el miembro tiene una imagen previa.
+        if ($event->getRawOriginal('img_path')) {
+            // Borrar la imagen del almacenamiento.
+            Storage::disk('public')->delete($event->getRawOriginal('img_path'));
+
+            // Establecer el campo de la ruta de la imagen como nulo.
+            $event->img_path = null;
+            $event->save();
+
+            // Retornar una respuesta indicando que la imagen fue eliminada exitosamente.
+            return response()->json([
+                'status' => true,
+                'message' => 'La imagen del evento se eliminó exitosamente.',
+                'data' => $event
+            ], 200);
+        }
+
+        // Si no hay imagen, retornar un mensaje indicando que no había imagen para eliminar.
+        return response()->json([
+            'status' => false,
+            'message' => 'El evento no tiene una imagen para eliminar.'
+        ], 400);
+    }
 }

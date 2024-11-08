@@ -75,12 +75,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/events/{id}/update-data', [EventController::class, 'updateData']);
     Route::post('/events/{id}/update-image', [EventController::class, 'updateImage']);
     Route::delete('/events/{id}', [EventController::class, 'destroy']);
+    Route::delete('/events/{id}/image', [EventController::class, 'deleteImage']);
 
     //  Services
     Route::post('/services', [ServiceController::class, 'store']);
     Route::put('/services/{id}/update-data', [ServiceController::class, 'updateData']);
     Route::post('/services/{id}/update-image', [ServiceController::class, 'updateImage']);
     Route::delete('/services/{id}', [ServiceController::class, 'destroy']);
+    Route::delete('/services/{id}/image', [ServiceController::class, 'deleteImage']);
 
     //  Labels
     Route::post('/labels', [LabelController::class, 'store']);

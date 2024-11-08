@@ -308,4 +308,48 @@ class ServiceController extends Controller
             'message' => 'Service deleted successfully.',
         ], 200);
     }
+
+    /**
+     * Delete the specified service's image.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteImage($id)
+    {
+        // Encontrar el miembro de la cámara por ID.
+        $service = Service::find($id);
+
+        // Si el miembro no existe, retornar una respuesta 404.
+        if (!$service) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No se encontró el servicio con el ID proporcionado.'
+            ], 404);
+        }
+
+        // Verificar si el miembro tiene una imagen previa.
+        if ($service->getRawOriginal('img_path')) {
+            // Borrar la imagen del almacenamiento.
+            Storage::disk('public')->delete($service->getRawOriginal('img_path'));
+
+            // Establecer el campo de la ruta de la imagen como nulo.
+            $service->img_path = null;
+            $service->save();
+
+            // Retornar una respuesta indicando que la imagen fue eliminada exitosamente.
+            return response()->json([
+                'status' => true,
+                'message' => 'La imagen del servicio se eliminó exitosamente.',
+                'data' => $service
+            ], 200);
+        }
+
+        // Si no hay imagen, retornar un mensaje indicando que no había imagen para eliminar.
+        return response()->json([
+            'status' => false,
+            'message' => 'El servicio no tiene una imagen para eliminar.'
+        ], 400);
+    }
 }
